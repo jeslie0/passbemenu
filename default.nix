@@ -1,0 +1,3 @@
+{
+  passmenu = import ./passbemenu.nix;
+}
