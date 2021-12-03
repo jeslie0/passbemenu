@@ -1,8 +1,10 @@
-let build = { runCommandLocal, lib, makeWrapper, dmenu-wayland, bemenu }:
-      runCommandLocal "passbemenu"
-        {nativeBuildInputs = [ makeWrapper ]; }
-        ''
-      makeWrapper ${./passbemenu.sh} $out/bin/passmenu --prefix PATH : ${lib.makeBinPath [ dmenu-wayland bemenu ]}
-      '';
+let build = { stdenv, coreutils, makeWrapper, dmenu-wayland, bemenu }:
+      stdenv.mkDerivation {
+        name = "passmenu";
+        src = ./passbemenu.sh;
+        nativeBuildInputs = [ makeWrapper ];
+        builder = ./builder.sh;
+        inherit coreutils dmenu-wayland bemenu makeWrapper;
+      };
 in with (import <nixpkgs> {});
-  build { inherit runCommandLocal lib makeWrapper dmenu-wayland bemenu; }
+  build { inherit stdenv coreutils makeWrapper dmenu-wayland bemenu; }
